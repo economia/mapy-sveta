@@ -26,9 +26,8 @@
       var x$, y$, z$, this$ = this;
       this.computeDimensions(600, 500);
       x$ = this.projection = d3.geo.mercator();
-      x$.scale(this.width / Math.PI / 2);
-      x$.translate([this.width / 2, this.height / 2]);
       x$.precision(0.1);
+      this.project('world');
       y$ = this.path = d3.geo.path();
       y$.projection(this.projection);
       z$ = this.svg = d3.select('body').append('svg');
@@ -41,6 +40,16 @@
         })).attr('class', 'boundary').attr('d', this$.path);
       });
     }
+    prototype.project = function(area){
+      var x$;
+      switch (area) {
+      case 'world':
+        x$ = this.projection;
+        x$.scale(this.width / Math.PI / 2);
+        x$.translate([this.width / 2, this.height / 2]);
+        return x$;
+      }
+    };
     return Worldmap;
   }(Dimensionable));
   function importAll$(obj, src){

@@ -13,14 +13,12 @@ Dimensionable =
         @height = @fullHeight - @margin.top - @margin.bottom
 
 
-
 class Worldmap implements Dimensionable
     (data) ->
         @computeDimensions 600 500
         @projection = d3.geo.mercator!
-            ..scale @width / Math.PI / 2
-            ..translate [@width / 2, @height / 2]
             ..precision 0.1
+        @project \world
         @path = d3.geo.path!
             ..projection @projection
         @svg = d3.select \body .append \svg
@@ -36,3 +34,9 @@ class Worldmap implements Dimensionable
             .attr \class \boundary
             .attr \d @path
 
+    project: (area) ->
+        switch area
+        | \world
+            @projection
+                ..scale @width / Math.PI / 2
+                ..translate [@width / 2, @height / 2]
