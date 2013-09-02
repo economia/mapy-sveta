@@ -47,9 +47,28 @@
         var boundaries, x$;
         this$.svg.append('path').datum(topojson.feature(world, world.objects.land)).attr('class', 'land').attr('d', this$.path);
         boundaries = topojson.feature(world, world.objects.countries).features;
+        boundaries = boundaries.filter(function(arg$){
+          var id, country;
+          id = arg$.id;
+          country = this$.data.get(id);
+          return country && (country.type.length || country.tooltip.length);
+        });
         x$ = this$.svg.selectAll('path.country').data(boundaries).enter().append('path');
         x$.attr('class', 'country');
         x$.attr('d', this$.path);
+        x$.attr('fill', function(arg$){
+          var id, country;
+          id = arg$.id;
+          country = this$.data.get(id);
+          switch (country != null && country.type) {
+          case 'pro':
+            return '#0f0';
+          case 'proti':
+            return '#f00';
+          default:
+            return 'none';
+          }
+        });
         return this$.svg.append('path').datum(topojson.mesh(world, world.objects.countries, function(a, b){
           return a !== b;
         })).attr('class', 'boundary').attr('d', this$.path);

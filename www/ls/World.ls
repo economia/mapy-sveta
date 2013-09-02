@@ -34,13 +34,21 @@ class Worldmap implements Dimensionable
             .attr \d @path
 
         boundaries = topojson.feature world, world.objects.countries .features
+        boundaries .= filter ({id}) ~>
+            country = @data.get id
+            country && (country.type.length || country.tooltip.length)
         @svg.selectAll \path.country
             .data boundaries
             .enter!
             .append \path
                 ..attr \class \country
                 ..attr \d @path
-                ..attr \fill ({id}) \none
+                ..attr \fill ({id}) ~>
+                    country = @data.get id
+                    switch country?type
+                    | \pro => \#0f0
+                    | \proti => \#f00
+                    | otherwise => \none
 
         @svg.append \path
             .datum topojson.mesh world, world.objects.countries, (a, b) -> a isnt b
