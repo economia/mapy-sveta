@@ -44,7 +44,12 @@
       z$.attr('width', this.fullWidth);
       z$.attr('height', this.fullHeight);
       d3.json("./js/world-50m.json", function(err, world){
+        var boundaries, x$;
         this$.svg.append('path').datum(topojson.feature(world, world.objects.land)).attr('class', 'land').attr('d', this$.path);
+        boundaries = topojson.feature(world, world.objects.countries).features;
+        x$ = this$.svg.selectAll('path.country').data(boundaries).enter().append('path');
+        x$.attr('class', 'country');
+        x$.attr('d', this$.path);
         return this$.svg.append('path').datum(topojson.mesh(world, world.objects.countries, function(a, b){
           return a !== b;
         })).attr('class', 'boundary').attr('d', this$.path);

@@ -13,3 +13,6 @@ body svg .boundary {
   stroke: #333;
   stroke-width: 0.5px;
 }
+body svg .country {
+  stroke: none;
+}

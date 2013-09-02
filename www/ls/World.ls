@@ -33,6 +33,15 @@ class Worldmap implements Dimensionable
             .attr \class \land
             .attr \d @path
 
+        boundaries = topojson.feature world, world.objects.countries .features
+        @svg.selectAll \path.country
+            .data boundaries
+            .enter!
+            .append \path
+                ..attr \class \country
+                ..attr \d @path
+                ..attr \fill ({id}) \none
+
         @svg.append \path
             .datum topojson.mesh world, world.objects.countries, (a, b) -> a isnt b
             .attr \class \boundary
