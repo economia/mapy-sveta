@@ -16,3 +16,6 @@ body svg .boundary {
 body svg .country {
   stroke: none;
 }
+body svg .country:hover {
+  opacity: 0.7;
+}
