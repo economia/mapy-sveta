@@ -2,3 +2,14 @@ body {
   margin: 0px;
   font-family: arial, sans-serif;
 }
+body svg {
+  background: #85bee6;
+}
+body svg .land {
+  fill: #fff;
+}
+body svg .boundary {
+  fill: none;
+  stroke: #333;
+  stroke-width: 0.5px;
+}
