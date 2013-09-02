@@ -1,6 +1,9 @@
 window.init = (data) ->
-    console.log data
-    new Worldmap
+    countriesById = d3.map!
+    for {id, zeme:name, typ:type, popis:tooltip} in data.staty
+        countriesById.set id, {name, type, tooltip}
+
+    new Worldmap countriesById
 
 Dimensionable =
     margin:
@@ -14,7 +17,7 @@ Dimensionable =
 
 
 class Worldmap implements Dimensionable
-    (data) ->
+    (@data) ->
         @computeDimensions 650 500
         @projection = d3.geo.mercator!
             ..precision 0.1
@@ -29,6 +32,7 @@ class Worldmap implements Dimensionable
             .datum topojson.feature world, world.objects.land
             .attr \class \land
             .attr \d @path
+
         @svg.append \path
             .datum topojson.mesh world, world.objects.countries, (a, b) -> a isnt b
             .attr \class \boundary

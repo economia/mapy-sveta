@@ -1,8 +1,17 @@
 (function(){
   var Dimensionable, Worldmap;
   window.init = function(data){
-    console.log(data);
-    return new Worldmap;
+    var countriesById, i$, ref$, len$, ref1$, id, name, type, tooltip;
+    countriesById = d3.map();
+    for (i$ = 0, len$ = (ref$ = data.staty).length; i$ < len$; ++i$) {
+      ref1$ = ref$[i$], id = ref1$.id, name = ref1$.zeme, type = ref1$.typ, tooltip = ref1$.popis;
+      countriesById.set(id, {
+        name: name,
+        type: type,
+        tooltip: tooltip
+      });
+    }
+    return new Worldmap(countriesById);
   };
   Dimensionable = {
     margin: {
@@ -24,6 +33,7 @@
     importAll$(prototype, arguments[0]);
     function Worldmap(data){
       var x$, y$, z$, this$ = this;
+      this.data = data;
       this.computeDimensions(650, 500);
       x$ = this.projection = d3.geo.mercator();
       x$.precision(0.1);
