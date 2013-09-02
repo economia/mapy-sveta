@@ -27,7 +27,7 @@
       this.computeDimensions(650, 500);
       x$ = this.projection = d3.geo.mercator();
       x$.precision(0.1);
-      this.project('world');
+      this.project('eusa');
       y$ = this.path = d3.geo.path();
       y$.projection(this.projection);
       z$ = this.svg = d3.select('body').append('svg');
@@ -50,6 +50,10 @@
       case 'world':
         scale = this.width / Math.PI / 2 * 1.4;
         translation = [this.width / 2, this.height / 2 * 1.4];
+        break;
+      case 'eusa':
+        scale = this.width / Math.PI * 1.4;
+        translation = [this.width / 1.35, this.height * 1.07];
       }
       x$ = this.projection;
       x$.scale(scale);

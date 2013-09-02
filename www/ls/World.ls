@@ -18,7 +18,7 @@ class Worldmap implements Dimensionable
         @computeDimensions 650 500
         @projection = d3.geo.mercator!
             ..precision 0.1
-        @project \world
+        @project \eusa
         @path = d3.geo.path!
             ..projection @projection
         @svg = d3.select \body .append \svg
@@ -42,6 +42,9 @@ class Worldmap implements Dimensionable
         | \world
             scale       = @width / Math.PI / 2 * 1.4
             translation = [@width / 2, @height / 2 * 1.4]
+        | \eusa
+            scale       = @width / Math.PI * 1.4
+            translation = [@width / 1.35, @height * 1.07]
         @projection
             ..scale scale
             ..translate translation
