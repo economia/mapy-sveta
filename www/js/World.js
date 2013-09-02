@@ -2,8 +2,9 @@
   var Dimensionable, Worldmap;
   new Tooltip().watchElements();
   window.init = function(data){
-    var countriesById, i$, ref$, len$, ref1$, id, name, type, tooltip;
+    var countriesById, fillColorsByType, i$, ref$, len$, ref1$, id, name, type, tooltip, color;
     countriesById = d3.map();
+    fillColorsByType = d3.map();
     for (i$ = 0, len$ = (ref$ = data.staty).length; i$ < len$; ++i$) {
       ref1$ = ref$[i$], id = ref1$.id, name = ref1$.zeme, type = ref1$.typ, tooltip = ref1$.popis;
       countriesById.set(id, {
@@ -12,7 +13,11 @@
         tooltip: tooltip
       });
     }
-    return new Worldmap(countriesById);
+    for (i$ = 0, len$ = (ref$ = data.typy).length; i$ < len$; ++i$) {
+      ref1$ = ref$[i$], type = ref1$.typ, color = ref1$.color;
+      fillColorsByType.set(type, color);
+    }
+    return new Worldmap(countriesById, fillColorsByType);
   };
   Dimensionable = {
     margin: {
@@ -32,9 +37,10 @@
     Worldmap.displayName = 'Worldmap';
     var prototype = Worldmap.prototype, constructor = Worldmap;
     importAll$(prototype, arguments[0]);
-    function Worldmap(data){
+    function Worldmap(data, fillColors){
       var x$, y$, z$, this$ = this;
       this.data = data;
+      this.fillColors = fillColors;
       this.computeDimensions(650, 500);
       x$ = this.projection = d3.geo.mercator();
       x$.precision(0.1);
@@ -63,16 +69,10 @@
           return this$.data.get(id).tooltip;
         });
         x$.attr('fill', function(arg$){
-          var id;
+          var id, type;
           id = arg$.id;
-          switch (this$.data.get(id).type) {
-          case 'pro':
-            return '#0f0';
-          case 'proti':
-            return '#f00';
-          default:
-            return 'none';
-          }
+          type = this$.data.get(id).type;
+          return this$.fillColors.get(type);
         });
         return this$.svg.append('path').datum(topojson.mesh(world, world.objects.countries, function(a, b){
           return a !== b;

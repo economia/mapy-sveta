@@ -1,10 +1,13 @@
 new Tooltip!watchElements!
 window.init = (data) ->
     countriesById = d3.map!
+    fillColorsByType = d3.map!
     for {id, zeme:name, typ:type, popis:tooltip} in data.staty
         countriesById.set id, {name, type, tooltip}
+    for {typ:type, color} in data.typy
+        fillColorsByType.set type, color
 
-    new Worldmap countriesById
+    new Worldmap countriesById, fillColorsByType
 
 Dimensionable =
     margin:
@@ -18,7 +21,7 @@ Dimensionable =
 
 
 class Worldmap implements Dimensionable
-    (@data) ->
+    (@data, @fillColors) ->
         @computeDimensions 650 500
         @projection = d3.geo.mercator!
             ..precision 0.1
@@ -46,10 +49,8 @@ class Worldmap implements Dimensionable
                 ..attr \d @path
                 ..attr \data-tooltip ({id}) ~> @data.get id .tooltip
                 ..attr \fill ({id}) ~>
-                    switch @data.get id .type
-                    | \pro => \#0f0
-                    | \proti => \#f00
-                    | otherwise => \none
+                    {type} = @data.get id
+                    @fillColors.get type
 
         @svg.append \path
             .datum topojson.mesh world, world.objects.countries, (a, b) -> a isnt b
