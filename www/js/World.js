@@ -20,7 +20,7 @@
     $window = $(window);
     width = $window.width();
     height = $window.height();
-    worldmap = new Worldmap(countriesById, fillColorsByType, {
+    worldmap = new Worldmap('eusa', countriesById, fillColorsByType, {
       width: width,
       height: height
     });
@@ -52,15 +52,16 @@
     Worldmap.displayName = 'Worldmap';
     var prototype = Worldmap.prototype, constructor = Worldmap;
     importAll$(prototype, arguments[0]);
-    function Worldmap(data, fillColors, arg$){
+    function Worldmap(visiblePart, data, fillColors, arg$){
       var width, height, x$, y$, z$, this$ = this;
+      this.visiblePart = visiblePart;
       this.data = data;
       this.fillColors = fillColors;
       width = arg$.width, height = arg$.height;
       this.computeDimensions(width, height);
       x$ = this.projection = d3.geo.mercator();
       x$.precision(0.1);
-      this.project('eusa');
+      this.project(this.visiblePart);
       y$ = this.path = d3.geo.path();
       y$.projection(this.projection);
       z$ = this.svg = d3.select('body').append('svg');
@@ -122,7 +123,7 @@
       x$ = this.svg;
       x$.attr('width', this.fullWidth);
       x$.attr('height', this.fullHeight);
-      this.project('eusa');
+      this.project(this.visiblePart);
       return this.svg.selectAll('path').attr('d', this.path);
     };
     return Worldmap;

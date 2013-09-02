@@ -9,7 +9,7 @@ window.init = (data) ->
     $window = $ window
     width  = $window .width!
     height = $window .height!
-    worldmap = new Worldmap countriesById, fillColorsByType, {width, height}
+    worldmap = new Worldmap \eusa, countriesById, fillColorsByType, {width, height}
     $window.on \resize ->
         width  = $window .width!
         height = $window .height!
@@ -28,11 +28,11 @@ Dimensionable =
 
 
 class Worldmap implements Dimensionable
-    (@data, @fillColors, {width, height}) ->
+    (@visiblePart, @data, @fillColors, {width, height}) ->
         @computeDimensions width, height
         @projection = d3.geo.mercator!
             ..precision 0.1
-        @project \eusa
+        @project @visiblePart
         @path = d3.geo.path!
             ..projection @projection
         @svg = d3.select \body .append \svg
@@ -83,7 +83,7 @@ class Worldmap implements Dimensionable
         @svg
             ..attr \width @fullWidth
             ..attr \height @fullHeight
-        @project \eusa
+        @project @visiblePart
         @svg.selectAll \path
             .attr \d @path
 
