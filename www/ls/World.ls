@@ -1,3 +1,4 @@
+new Tooltip!watchElements!
 window.init = (data) ->
     countriesById = d3.map!
     for {id, zeme:name, typ:type, popis:tooltip} in data.staty
@@ -43,9 +44,9 @@ class Worldmap implements Dimensionable
             .append \path
                 ..attr \class \country
                 ..attr \d @path
+                ..attr \data-tooltip ({id}) ~> @data.get id .tooltip
                 ..attr \fill ({id}) ~>
-                    country = @data.get id
-                    switch country?type
+                    switch @data.get id .type
                     | \pro => \#0f0
                     | \proti => \#f00
                     | otherwise => \none

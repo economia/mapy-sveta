@@ -1,5 +1,6 @@
 (function(){
   var Dimensionable, Worldmap;
+  new Tooltip().watchElements();
   window.init = function(data){
     var countriesById, i$, ref$, len$, ref1$, id, name, type, tooltip;
     countriesById = d3.map();
@@ -56,11 +57,15 @@
         x$ = this$.svg.selectAll('path.country').data(boundaries).enter().append('path');
         x$.attr('class', 'country');
         x$.attr('d', this$.path);
-        x$.attr('fill', function(arg$){
-          var id, country;
+        x$.attr('data-tooltip', function(arg$){
+          var id;
           id = arg$.id;
-          country = this$.data.get(id);
-          switch (country != null && country.type) {
+          return this$.data.get(id).tooltip;
+        });
+        x$.attr('fill', function(arg$){
+          var id;
+          id = arg$.id;
+          switch (this$.data.get(id).type) {
           case 'pro':
             return '#0f0';
           case 'proti':
