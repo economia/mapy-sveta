@@ -24,7 +24,7 @@
     importAll$(prototype, arguments[0]);
     function Worldmap(data){
       var x$, y$, z$, this$ = this;
-      this.computeDimensions(600, 500);
+      this.computeDimensions(650, 500);
       x$ = this.projection = d3.geo.mercator();
       x$.precision(0.1);
       this.project('world');
@@ -41,14 +41,20 @@
       });
     }
     prototype.project = function(area){
-      var x$;
+      var scale, translation, x$;
       switch (area) {
+      case 'earth':
+        scale = this.width / Math.PI / 2;
+        translation = [this.width / 2, this.height / 2];
+        break;
       case 'world':
-        x$ = this.projection;
-        x$.scale(this.width / Math.PI / 2);
-        x$.translate([this.width / 2, this.height / 2]);
-        return x$;
+        scale = this.width / Math.PI / 2 * 1.4;
+        translation = [this.width / 2, this.height / 2 * 1.4];
       }
+      x$ = this.projection;
+      x$.scale(scale);
+      x$.translate(translation);
+      return x$;
     };
     return Worldmap;
   }(Dimensionable));

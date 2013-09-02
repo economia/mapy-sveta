@@ -15,7 +15,7 @@ Dimensionable =
 
 class Worldmap implements Dimensionable
     (data) ->
-        @computeDimensions 600 500
+        @computeDimensions 650 500
         @projection = d3.geo.mercator!
             ..precision 0.1
         @project \world
@@ -36,7 +36,12 @@ class Worldmap implements Dimensionable
 
     project: (area) ->
         switch area
+        | \earth
+            scale       = @width / Math.PI / 2
+            translation = [@width / 2, @height / 2]
         | \world
-            @projection
-                ..scale @width / Math.PI / 2
-                ..translate [@width / 2, @height / 2]
+            scale       = @width / Math.PI / 2 * 1.4
+            translation = [@width / 2, @height / 2 * 1.4]
+        @projection
+            ..scale scale
+            ..translate translation
