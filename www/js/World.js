@@ -63,7 +63,7 @@
       this.project('eusa');
       y$ = this.path = d3.geo.path();
       y$.projection(this.projection);
-      z$ = this.svg = d3.select('#content').append('svg');
+      z$ = this.svg = d3.select('body').append('svg');
       z$.attr('width', this.fullWidth);
       z$.attr('height', this.fullHeight);
       d3.json("./js/world.json", function(err, world){
@@ -116,9 +116,12 @@
       return x$;
     };
     prototype.resize = function(arg$){
-      var width, height;
+      var width, height, x$;
       width = arg$.width, height = arg$.height;
       this.computeDimensions(width, height);
+      x$ = this.svg;
+      x$.attr('width', this.fullWidth);
+      x$.attr('height', this.fullHeight);
       this.project('eusa');
       return this.svg.selectAll('path').attr('d', this.path);
     };

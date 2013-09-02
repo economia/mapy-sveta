@@ -1,15 +1,12 @@
 body {
   margin: 0px;
   font-family: arial, sans-serif;
-}
-body #content {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  width: 100%;
   overflow: hidden;
 }
 body svg {
+  position: absolute;
+  top: 0px;
+  left: 0px;
   background: #85bee6;
 }
 body svg .land {

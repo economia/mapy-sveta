@@ -35,7 +35,7 @@ class Worldmap implements Dimensionable
         @project \eusa
         @path = d3.geo.path!
             ..projection @projection
-        @svg = d3.select \#content .append \svg
+        @svg = d3.select \body .append \svg
             ..attr \width @fullWidth
             ..attr \height @fullHeight
         (err, world) <~ d3.json "./js/world.json"
@@ -80,6 +80,9 @@ class Worldmap implements Dimensionable
             ..translate translation
     resize: ({width, height})->
         @computeDimensions width, height
+        @svg
+            ..attr \width @fullWidth
+            ..attr \height @fullHeight
         @project \eusa
         @svg.selectAll \path
             .attr \d @path
