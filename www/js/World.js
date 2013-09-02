@@ -1,6 +1,11 @@
 (function(){
-  var Dimensionable, Worldmap;
+  var docKey, x$, script, Dimensionable, Worldmap;
   new Tooltip().watchElements();
+  docKey = window.location.hash.substr(1);
+  x$ = script = document.createElement('script');
+  x$.type = 'text/javascript';
+  x$.src = "http://service.ihned.cz/spreadsheet/bigfilter.php?key=" + docKey + "&numsheets=2&cb=init&forcecache=1";
+  $('body').append(script);
   window.init = function(data){
     var countriesById, fillColorsByType, i$, ref$, len$, ref1$, id, name, type, tooltip, color;
     countriesById = d3.map();

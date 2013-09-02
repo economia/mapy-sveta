@@ -1,4 +1,9 @@
 new Tooltip!watchElements!
+docKey = window.location.hash.substr 1
+script = document.createElement \script
+    ..type = \text/javascript
+    ..src = "http://service.ihned.cz/spreadsheet/bigfilter.php?key=#{docKey}&numsheets=2&cb=init&forcecache=1"
+$ 'body' .append script
 window.init = (data) ->
     countriesById = d3.map!
     fillColorsByType = d3.map!
