@@ -1,9 +1,4 @@
 new Tooltip!watchElements!
-docKey = window.location.hash.substr 1
-script = document.createElement \script
-    ..type = \text/javascript
-    ..src = "http://service.ihned.cz/spreadsheet/bigfilter.php?key=#{docKey}&numsheets=2&cb=init&forcecache=1"
-$ 'body' .append script
 window.init = (data) ->
     countriesById = d3.map!
     fillColorsByType = d3.map!
@@ -11,8 +6,15 @@ window.init = (data) ->
         countriesById.set id, {name, type, tooltip}
     for {typ:type, color} in data.typy
         fillColorsByType.set type, color
+    $window = $ window
+    width  = $window .width!
+    height = $window .height!
+    worldmap = new Worldmap countriesById, fillColorsByType, {width, height}
+    $window.on \resize ->
+        width  = $window .width!
+        height = $window .height!
+        worldmap.resize {width, height}
 
-    new Worldmap countriesById, fillColorsByType
 
 Dimensionable =
     margin:
@@ -26,17 +28,17 @@ Dimensionable =
 
 
 class Worldmap implements Dimensionable
-    (@data, @fillColors) ->
-        @computeDimensions 650 500
+    (@data, @fillColors, {width, height}) ->
+        @computeDimensions width, height
         @projection = d3.geo.mercator!
             ..precision 0.1
         @project \eusa
         @path = d3.geo.path!
             ..projection @projection
-        @svg = d3.select \body .append \svg
+        @svg = d3.select \#content .append \svg
             ..attr \width @fullWidth
             ..attr \height @fullHeight
-        (err, world) <~ d3.json "./js/world-50m.json"
+        (err, world) <~ d3.json "./js/world.json"
         @svg.append \path
             .datum topojson.feature world, world.objects.land
             .attr \class \land
@@ -76,3 +78,15 @@ class Worldmap implements Dimensionable
         @projection
             ..scale scale
             ..translate translation
+    resize: ({width, height})->
+        @computeDimensions width, height
+        @project \eusa
+        @svg.selectAll \path
+            .attr \d @path
+
+
+docKey = window.location.hash.substr 1
+script = document.createElement \script
+    ..type = \text/javascript
+    ..src = "http://service.ihned.cz/spreadsheet/bigfilter.php?key=#{docKey}&numsheets=2&cb=init&forcecache=1"
+$ 'body' .append script

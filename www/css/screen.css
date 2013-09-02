@@ -2,6 +2,13 @@ body {
   margin: 0px;
   font-family: arial, sans-serif;
 }
+body #content {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  width: 100%;
+  overflow: hidden;
+}
 body svg {
   background: #85bee6;
 }

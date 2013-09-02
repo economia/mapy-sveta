@@ -1,13 +1,8 @@
 (function(){
-  var docKey, x$, script, Dimensionable, Worldmap;
+  var Dimensionable, Worldmap, docKey, x$, script;
   new Tooltip().watchElements();
-  docKey = window.location.hash.substr(1);
-  x$ = script = document.createElement('script');
-  x$.type = 'text/javascript';
-  x$.src = "http://service.ihned.cz/spreadsheet/bigfilter.php?key=" + docKey + "&numsheets=2&cb=init&forcecache=1";
-  $('body').append(script);
   window.init = function(data){
-    var countriesById, fillColorsByType, i$, ref$, len$, ref1$, id, name, type, tooltip, color;
+    var countriesById, fillColorsByType, i$, ref$, len$, ref1$, id, name, type, tooltip, color, $window, width, height, worldmap;
     countriesById = d3.map();
     fillColorsByType = d3.map();
     for (i$ = 0, len$ = (ref$ = data.staty).length; i$ < len$; ++i$) {
@@ -22,7 +17,22 @@
       ref1$ = ref$[i$], type = ref1$.typ, color = ref1$.color;
       fillColorsByType.set(type, color);
     }
-    return new Worldmap(countriesById, fillColorsByType);
+    $window = $(window);
+    width = $window.width();
+    height = $window.height();
+    worldmap = new Worldmap(countriesById, fillColorsByType, {
+      width: width,
+      height: height
+    });
+    return $window.on('resize', function(){
+      var width, height;
+      width = $window.width();
+      height = $window.height();
+      return worldmap.resize({
+        width: width,
+        height: height
+      });
+    });
   };
   Dimensionable = {
     margin: {
@@ -42,20 +52,21 @@
     Worldmap.displayName = 'Worldmap';
     var prototype = Worldmap.prototype, constructor = Worldmap;
     importAll$(prototype, arguments[0]);
-    function Worldmap(data, fillColors){
-      var x$, y$, z$, this$ = this;
+    function Worldmap(data, fillColors, arg$){
+      var width, height, x$, y$, z$, this$ = this;
       this.data = data;
       this.fillColors = fillColors;
-      this.computeDimensions(650, 500);
+      width = arg$.width, height = arg$.height;
+      this.computeDimensions(width, height);
       x$ = this.projection = d3.geo.mercator();
       x$.precision(0.1);
       this.project('eusa');
       y$ = this.path = d3.geo.path();
       y$.projection(this.projection);
-      z$ = this.svg = d3.select('body').append('svg');
+      z$ = this.svg = d3.select('#content').append('svg');
       z$.attr('width', this.fullWidth);
       z$.attr('height', this.fullHeight);
-      d3.json("./js/world-50m.json", function(err, world){
+      d3.json("./js/world.json", function(err, world){
         var boundaries, x$;
         this$.svg.append('path').datum(topojson.feature(world, world.objects.land)).attr('class', 'land').attr('d', this$.path);
         boundaries = topojson.feature(world, world.objects.countries).features;
@@ -104,8 +115,20 @@
       x$.translate(translation);
       return x$;
     };
+    prototype.resize = function(arg$){
+      var width, height;
+      width = arg$.width, height = arg$.height;
+      this.computeDimensions(width, height);
+      this.project('eusa');
+      return this.svg.selectAll('path').attr('d', this.path);
+    };
     return Worldmap;
   }(Dimensionable));
+  docKey = window.location.hash.substr(1);
+  x$ = script = document.createElement('script');
+  x$.type = 'text/javascript';
+  x$.src = "http://service.ihned.cz/spreadsheet/bigfilter.php?key=" + docKey + "&numsheets=2&cb=init&forcecache=1";
+  $('body').append(script);
   function importAll$(obj, src){
     for (var key in src) obj[key] = src[key];
     return obj;
