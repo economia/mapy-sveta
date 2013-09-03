@@ -1,19 +1,30 @@
 new Tooltip!watchElements!
+countriesById = d3.map!
+fillColorsByType = d3.map!
+settings = d3.map!
+worldTopojson = null
 window.init = (data) ->
-    countriesById = d3.map!
-    fillColorsByType = d3.map!
-    settings = d3.map!
     for {id, zeme:name, typ:type, popis:tooltip} in data.staty
         countriesById.set id, {name, type, tooltip}
     for {typ:type, color} in data.typy
         fillColorsByType.set type, color
     for {key, value} in data.nastaveni
         settings.set key, value
+    somethingLoaded!
+
+d3.json "./js/world.json" (err, world) ->
+    worldTopojson := world
+    somethingLoaded!
+
+loadCounter = 0
+somethingLoaded = ->
+    if ++loadCounter >= 2 then draw!
+draw = ->
     $window = $ window
     width  = $window .width!
     height = $window .height!
     display = settings.get \display
-    worldmap = new Worldmap display, countriesById, fillColorsByType, {width, height}
+    worldmap = new Worldmap worldTopojson, display, countriesById, fillColorsByType, {width, height}
     $window.on \resize ->
         width  = $window .width!
         height = $window .height!
@@ -32,7 +43,7 @@ Dimensionable =
 
 
 class Worldmap implements Dimensionable
-    (@visiblePart, @data, @fillColors, {width, height}) ->
+    (world, @visiblePart, @data, @fillColors, {width, height}) ->
         @computeDimensions width, height
         @projection = d3.geo.mercator!
             ..precision 0.1
@@ -42,7 +53,7 @@ class Worldmap implements Dimensionable
         @svg = d3.select \body .append \svg
             ..attr \width @fullWidth
             ..attr \height @fullHeight
-        (err, world) <~ d3.json "./js/world.json"
+
         @svg.append \path
             .datum topojson.feature world, world.objects.land
             .attr \class \land

@@ -1,11 +1,12 @@
 (function(){
-  var Dimensionable, Worldmap, docKey, x$, script;
+  var countriesById, fillColorsByType, settings, worldTopojson, loadCounter, somethingLoaded, draw, Dimensionable, Worldmap, docKey, x$, script;
   new Tooltip().watchElements();
+  countriesById = d3.map();
+  fillColorsByType = d3.map();
+  settings = d3.map();
+  worldTopojson = null;
   window.init = function(data){
-    var countriesById, fillColorsByType, settings, i$, ref$, len$, ref1$, id, name, type, tooltip, color, key, value, $window, width, height, display, worldmap;
-    countriesById = d3.map();
-    fillColorsByType = d3.map();
-    settings = d3.map();
+    var i$, ref$, len$, ref1$, id, name, type, tooltip, color, key, value;
     for (i$ = 0, len$ = (ref$ = data.staty).length; i$ < len$; ++i$) {
       ref1$ = ref$[i$], id = ref1$.id, name = ref1$.zeme, type = ref1$.typ, tooltip = ref1$.popis;
       countriesById.set(id, {
@@ -22,11 +23,25 @@
       ref1$ = ref$[i$], key = ref1$.key, value = ref1$.value;
       settings.set(key, value);
     }
+    return somethingLoaded();
+  };
+  d3.json("./js/world.json", function(err, world){
+    worldTopojson = world;
+    return somethingLoaded();
+  });
+  loadCounter = 0;
+  somethingLoaded = function(){
+    if (++loadCounter >= 2) {
+      return draw();
+    }
+  };
+  draw = function(){
+    var $window, width, height, display, worldmap;
     $window = $(window);
     width = $window.width();
     height = $window.height();
     display = settings.get('display');
-    worldmap = new Worldmap(display, countriesById, fillColorsByType, {
+    worldmap = new Worldmap(worldTopojson, display, countriesById, fillColorsByType, {
       width: width,
       height: height
     });
@@ -58,8 +73,8 @@
     Worldmap.displayName = 'Worldmap';
     var prototype = Worldmap.prototype, constructor = Worldmap;
     importAll$(prototype, arguments[0]);
-    function Worldmap(visiblePart, data, fillColors, arg$){
-      var width, height, x$, y$, z$, this$ = this;
+    function Worldmap(world, visiblePart, data, fillColors, arg$){
+      var width, height, x$, y$, z$, boundaries, z1$, this$ = this;
       this.visiblePart = visiblePart;
       this.data = data;
       this.fillColors = fillColors;
@@ -73,34 +88,31 @@
       z$ = this.svg = d3.select('body').append('svg');
       z$.attr('width', this.fullWidth);
       z$.attr('height', this.fullHeight);
-      d3.json("./js/world.json", function(err, world){
-        var boundaries, x$;
-        this$.svg.append('path').datum(topojson.feature(world, world.objects.land)).attr('class', 'land').attr('d', this$.path);
-        boundaries = topojson.feature(world, world.objects.countries).features;
-        boundaries = boundaries.filter(function(arg$){
-          var id, country;
-          id = arg$.id;
-          country = this$.data.get(id);
-          return country && (country.type.length || country.tooltip.length);
-        });
-        x$ = this$.svg.selectAll('path.country').data(boundaries).enter().append('path');
-        x$.attr('class', 'country');
-        x$.attr('d', this$.path);
-        x$.attr('data-tooltip', function(arg$){
-          var id;
-          id = arg$.id;
-          return this$.data.get(id).tooltip;
-        });
-        x$.attr('fill', function(arg$){
-          var id, type;
-          id = arg$.id;
-          type = this$.data.get(id).type;
-          return this$.fillColors.get(type);
-        });
-        return this$.svg.append('path').datum(topojson.mesh(world, world.objects.countries, function(a, b){
-          return a !== b;
-        })).attr('class', 'boundary').attr('d', this$.path);
+      this.svg.append('path').datum(topojson.feature(world, world.objects.land)).attr('class', 'land').attr('d', this.path);
+      boundaries = topojson.feature(world, world.objects.countries).features;
+      boundaries = boundaries.filter(function(arg$){
+        var id, country;
+        id = arg$.id;
+        country = this$.data.get(id);
+        return country && (country.type.length || country.tooltip.length);
       });
+      z1$ = this.svg.selectAll('path.country').data(boundaries).enter().append('path');
+      z1$.attr('class', 'country');
+      z1$.attr('d', this.path);
+      z1$.attr('data-tooltip', function(arg$){
+        var id;
+        id = arg$.id;
+        return this$.data.get(id).tooltip;
+      });
+      z1$.attr('fill', function(arg$){
+        var id, type;
+        id = arg$.id;
+        type = this$.data.get(id).type;
+        return this$.fillColors.get(type);
+      });
+      this.svg.append('path').datum(topojson.mesh(world, world.objects.countries, function(a, b){
+        return a !== b;
+      })).attr('class', 'boundary').attr('d', this.path);
     }
     prototype.project = function(area){
       var center, scale, translation, x$;
