@@ -72,7 +72,8 @@ class Worldmap implements Dimensionable
             translation = [@width / 2, @height / 2]
         | \world
             scale       = @width / Math.PI / 2 * 1.4
-            translation = [@width / 2, @height / 2 * 1.4]
+            translation = [@width / 2, @height / 2]
+            center       = [0 23]
         | \eusa
             scale       = @width / Math.PI * 1.4
             translation = [@width / 2, @height / 2]

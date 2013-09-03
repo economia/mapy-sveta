@@ -106,7 +106,8 @@
         break;
       case 'world':
         scale = this.width / Math.PI / 2 * 1.4;
-        translation = [this.width / 2, this.height / 2 * 1.4];
+        translation = [this.width / 2, this.height / 2];
+        center = [0, 23];
         break;
       case 'eusa':
         scale = this.width / Math.PI * 1.4;
