@@ -97,7 +97,8 @@
       });
     }
     prototype.project = function(area){
-      var scale, translation, x$;
+      var center, scale, translation, x$;
+      center = [0, 0];
       switch (area) {
       case 'earth':
         scale = this.width / Math.PI / 2;
@@ -109,11 +110,13 @@
         break;
       case 'eusa':
         scale = this.width / Math.PI * 1.4;
-        translation = [this.width / 1.35, this.height * 1.07];
+        translation = [this.width / 2, this.height / 2];
+        center = [-30, 48];
       }
       x$ = this.projection;
       x$.scale(scale);
       x$.translate(translation);
+      x$.center(center);
       return x$;
     };
     prototype.resize = function(arg$){

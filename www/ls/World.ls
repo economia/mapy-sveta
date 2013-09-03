@@ -65,6 +65,7 @@ class Worldmap implements Dimensionable
             .attr \d @path
 
     project: (area) ->
+        center = [0 0]
         switch area
         | \earth
             scale       = @width / Math.PI / 2
@@ -74,10 +75,12 @@ class Worldmap implements Dimensionable
             translation = [@width / 2, @height / 2 * 1.4]
         | \eusa
             scale       = @width / Math.PI * 1.4
-            translation = [@width / 1.35, @height * 1.07]
+            translation = [@width / 2, @height / 2]
+            center      = [-30 48]
         @projection
             ..scale scale
             ..translate translation
+            ..center center
     resize: ({width, height})->
         @computeDimensions width, height
         @svg
