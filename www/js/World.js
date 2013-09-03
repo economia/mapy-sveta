@@ -2,9 +2,10 @@
   var Dimensionable, Worldmap, docKey, x$, script;
   new Tooltip().watchElements();
   window.init = function(data){
-    var countriesById, fillColorsByType, i$, ref$, len$, ref1$, id, name, type, tooltip, color, $window, width, height, worldmap;
+    var countriesById, fillColorsByType, settings, i$, ref$, len$, ref1$, id, name, type, tooltip, color, key, value, $window, width, height, display, worldmap;
     countriesById = d3.map();
     fillColorsByType = d3.map();
+    settings = d3.map();
     for (i$ = 0, len$ = (ref$ = data.staty).length; i$ < len$; ++i$) {
       ref1$ = ref$[i$], id = ref1$.id, name = ref1$.zeme, type = ref1$.typ, tooltip = ref1$.popis;
       countriesById.set(id, {
@@ -17,10 +18,15 @@
       ref1$ = ref$[i$], type = ref1$.typ, color = ref1$.color;
       fillColorsByType.set(type, color);
     }
+    for (i$ = 0, len$ = (ref$ = data.nastaveni).length; i$ < len$; ++i$) {
+      ref1$ = ref$[i$], key = ref1$.key, value = ref1$.value;
+      settings.set(key, value);
+    }
     $window = $(window);
     width = $window.width();
     height = $window.height();
-    worldmap = new Worldmap('eusa', countriesById, fillColorsByType, {
+    display = settings.get('display');
+    worldmap = new Worldmap(display, countriesById, fillColorsByType, {
       width: width,
       height: height
     });
@@ -135,7 +141,7 @@
   docKey = window.location.hash.substr(1);
   x$ = script = document.createElement('script');
   x$.type = 'text/javascript';
-  x$.src = "http://service.ihned.cz/spreadsheet/bigfilter.php?key=" + docKey + "&numsheets=2&cb=init&forcecache=1";
+  x$.src = "http://service.ihned.cz/spreadsheet/bigfilter.php?key=" + docKey + "&numsheets=3&cb=init&forcecache=1";
   $('body').append(script);
   function importAll$(obj, src){
     for (var key in src) obj[key] = src[key];

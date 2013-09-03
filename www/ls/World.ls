@@ -2,14 +2,18 @@ new Tooltip!watchElements!
 window.init = (data) ->
     countriesById = d3.map!
     fillColorsByType = d3.map!
+    settings = d3.map!
     for {id, zeme:name, typ:type, popis:tooltip} in data.staty
         countriesById.set id, {name, type, tooltip}
     for {typ:type, color} in data.typy
         fillColorsByType.set type, color
+    for {key, value} in data.nastaveni
+        settings.set key, value
     $window = $ window
     width  = $window .width!
     height = $window .height!
-    worldmap = new Worldmap \eusa, countriesById, fillColorsByType, {width, height}
+    display = settings.get \display
+    worldmap = new Worldmap display, countriesById, fillColorsByType, {width, height}
     $window.on \resize ->
         width  = $window .width!
         height = $window .height!
@@ -95,5 +99,5 @@ class Worldmap implements Dimensionable
 docKey = window.location.hash.substr 1
 script = document.createElement \script
     ..type = \text/javascript
-    ..src = "http://service.ihned.cz/spreadsheet/bigfilter.php?key=#{docKey}&numsheets=2&cb=init&forcecache=1"
+    ..src = "http://service.ihned.cz/spreadsheet/bigfilter.php?key=#{docKey}&numsheets=3&cb=init&forcecache=1"
 $ 'body' .append script
