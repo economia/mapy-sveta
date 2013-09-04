@@ -1,0 +1,7 @@
+/node_modules
+/www/config.php
+/srv/config.ls
+/*.sublime-workspace
+/www/screen.css
+/www/js/*
+/www/script.js

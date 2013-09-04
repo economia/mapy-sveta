@@ -12,7 +12,7 @@ window.init = (data) ->
         settings.set key, value
     somethingLoaded!
 
-d3.json "./js/world.json" (err, world) ->
+d3.json "./topojson/world.json" (err, world) ->
     worldTopojson := world
     somethingLoaded!
 
