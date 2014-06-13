@@ -1,0 +1,26 @@
+{
+  "name": "mapy-sveta",
+  "version": "0.0.1",
+  "description": "Na Google docs napojená mapa světa umožňující vizualizace nad jednotlivými státy.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/economia/mapy-sveta.git"
+  },
+  "keywords": [
+    "maps"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/economia/mapy-sveta/issues"
+  },
+  "homepage": "https://github.com/economia/mapy-sveta",
+  "dependencies": {
+    "stylus": "^0.46.3",
+    "uglify-js": "^2.4.14"
+  }
+}
